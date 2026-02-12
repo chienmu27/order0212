@@ -12,7 +12,7 @@ body{
     background:#f5f6fa;
 }
 
-/* ====== 上方選單 ====== */
+/* ===== 導覽列 ===== */
 .nav{
     display:flex;
     background:#4285f4;
@@ -26,14 +26,10 @@ body{
     font-size:16px;
     cursor:pointer;
 }
-.nav button:hover{
-    background:#357abd;
-}
-.nav button.active{
-    background:#2f5fb3;
-}
+.nav button:hover{ background:#357abd; }
+.nav button.active{ background:#2f5fb3; }
 
-/* ====== 頁面區塊 ====== */
+/* ===== 頁面區塊 ===== */
 .page{
     display:none;
     padding:20px;
@@ -45,15 +41,24 @@ body{
 /* iframe */
 iframe{
     width:100%;
-    height:90vh;
+    height:85vh;
     border:none;
+}
+
+/* 卡片樣式 */
+.card{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom:20px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- ====== 導覽列 ====== -->
+<!-- 導覽列 -->
 <div class="nav">
     <button onclick="showPage('form')" id="btn_form" class="active">📝 訂餐填寫</button>
     <button onclick="showPage('query')" id="btn_query">🔍 訂單查詢</button>
@@ -61,53 +66,43 @@ iframe{
     <button onclick="showPage('setting')" id="btn_setting">⚙️ 設定</button>
 </div>
 
-<!-- ================= 頁面 1：訂餐填寫 ================= -->
+<!-- ================= 訂餐填寫 ================= -->
 <div id="form" class="page active">
-<iframe src="https://docs.google.com/forms/d/e/1FAIpQLScooZ_B9Jm7a2-IsEfJhwhLR7hsLyy8knIU3TKuzM7pw_Z5RQ/viewform?embedded=true"></iframe>
+    <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScooZ_B9Jm7a2-IsEfJhwhLR7hsLyy8knIU3TKuzM7pw_Z5RQ/viewform?embedded=true"></iframe>
 </div>
 
-<!-- ================= 頁面 2：訂單查詢 ================= -->
+<!-- ================= 訂單查詢 ================= -->
 <div id="query" class="page">
-<iframe srcdoc='
-<!DOCTYPE html>
-<html>
-<body style="margin:0">
-<script>
-window.location.href="query.html";
-</script>
-</body>
-</html>
-'></iframe>
+    <div class="card">
+        <h3>訂單查詢</h3>
+        <p>請使用下方 Google 試算表公開 CSV 進行查詢。</p>
+        <button onclick="window.open('https://docs.google.com/spreadsheets/d/e/2PACX-1vQISD3cRAvsldviyxyfFi7xQVE12l900EW1yu8_OXOS-uDIr12XAr8zISHsZpJzTBLe_j4kuHWwgdG6/pubhtml','_blank')">
+            開啟訂單查詢
+        </button>
+    </div>
 </div>
 
-<!-- ================= 頁面 3：訂單刪除 ================= -->
+<!-- ================= 訂單刪除 ================= -->
 <div id="delete" class="page">
-<iframe srcdoc="
-<!DOCTYPE html>
-<html>
-<body style='margin:0'>
-<script>
-window.location.href='delete.html';
-</script>
-</body>
-</html>
-"></iframe>
+    <div class="card">
+        <h3>訂單刪除管理</h3>
+        <p>請透過後台管理系統執行刪除操作。</p>
+        <button onclick="window.open('https://script.google.com/macros/s/AKfycbzh9zPFHf6vmhQQR7LrHlokXkPPKnQ2u9ZiqnL6x9kMe4YSaMkrLJJOsqU72OXOIwwo/exec','_blank')">
+            開啟刪除管理
+        </button>
+    </div>
 </div>
 
-<!-- ================= 頁面 4：設定 ================= -->
+<!-- ================= 設定 ================= -->
 <div id="setting" class="page">
-<iframe srcdoc="
-<!DOCTYPE html>
-<html>
-<body style='margin:0'>
-<script>
-window.location.href='setting.html';
-</script>
-</body>
-</html>
-"></iframe>
+    <div class="card">
+        <h3>系統設定</h3>
+        <p>請開啟設定頁面進行日期與店家管理。</p>
+        <button onclick="window.open('https://script.google.com/macros/s/AKfycbxsG1au7MoB7WKs397tM0ZQciSZkdyM_U5Bgb7FBTzOn9OVLFi6_94waAz3HEddovIY/exec','_blank')">
+            開啟設定頁面
+        </button>
+    </div>
 </div>
-
 
 <script>
 function showPage(id){
