@@ -386,7 +386,7 @@ const App = () => {
         <div className="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-black text-lg shadow-blue-200 shadow-lg">L</div>
-            <span className="text-lg font-black text-gray-800 hidden sm:block">午餐系統</span>
+            <span className="text-lg font-black text-gray-800 hidden sm:block">訂餐系統</span>
           </div>
           <nav className="flex space-x-1 sm:space-x-3 overflow-x-auto no-scrollbar py-1">
             {tabs.map(t => (
