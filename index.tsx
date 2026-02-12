@@ -49,12 +49,17 @@ function parseCSV(text: string): string[][] {
 // ==========================================
 
 const OrderForm = () => (
-  <div className="flex flex-col h-full min-h-[800px]">
-    <div className="bg-blue-50 p-4 border-b border-blue-100 flex justify-between items-center">
+  <div className="flex flex-col h-full min-h-[2000px]">
+    <div className="bg-blue-50 p-4 border-b border-blue-100 flex justify-center items-center">
       <h2 className="text-lg font-bold text-blue-800">📝 填寫訂單</h2>
-      <a href={GOOGLE_FORM_URL.replace('?embedded=true', '')} target="_blank" className="text-sm text-blue-600 underline hover:text-blue-800">新視窗開啟</a>
     </div>
-    <iframe src={GOOGLE_FORM_URL} className="w-full flex-grow border-none min-h-[800px]" title="Form">載入中...</iframe>
+    <iframe 
+      src={GOOGLE_FORM_URL} 
+      className="w-full flex-grow border-none min-h-[2000px]" 
+      title="Form"
+    >
+      載入中...
+    </iframe>
   </div>
 );
 
