@@ -1,140 +1,44 @@
 
-import React, { useState, useEffect } from 'react';
-import { SETTINGS_SCRIPT_URL } from '../constants';
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>午餐訂購管理系統</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Babel Standalone: 用於在瀏覽器中直接執行 TSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 
-const Settings: React.FC = () => {
-  const [orderDate, setOrderDate] = useState('2026-01-26');
-  const [restaurants, setRestaurants] = useState<string[]>([]);
-  const [selectedStore, setSelectedStore] = useState('');
-  const [acc, setAcc] = useState('');
-  const [pwd, setPwd] = useState('');
-  const [status, setStatus] = useState({ message: '', type: '' });
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        const res = await fetch(`${SETTINGS_SCRIPT_URL}?action=getOptions`);
-        const data = await res.json();
-        const filtered = data.filter((item: string) => item);
-        setRestaurants(filtered);
-        if (filtered.length > 0) setSelectedStore(filtered[0]);
-      } catch (err) {
-        setStatus({ message: "選單載入失敗", type: "error" });
-      }
-    };
-    fetchOptions();
-  }, []);
-
-  const sendData = async () => {
-    if (!acc || !pwd || !orderDate || !selectedStore) {
-      alert("請填寫完整資訊");
-      return;
-    }
-
-    setLoading(true);
-    setStatus({ message: "處理中...", type: "" });
-
-    const finalUrl = `${SETTINGS_SCRIPT_URL}?action=submit&date=${encodeURIComponent(orderDate)}&store=${encodeURIComponent(selectedStore)}&acc=${encodeURIComponent(acc)}&pwd=${encodeURIComponent(pwd)}`;
-
-    try {
-      const res = await fetch(finalUrl);
-      const text = await res.text();
-      setStatus({ 
-        message: text, 
-        type: text.includes("成功") ? "success" : "error" 
-      });
-      if (text.includes("成功")) {
-        setAcc('');
-        setPwd('');
-      }
-    } catch (err) {
-      setStatus({ message: "連線發生錯誤", type: "error" });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="max-w-md mx-auto p-8">
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-xl overflow-hidden">
-        <div className="bg-blue-600 p-6 text-center">
-          <h3 className="text-xl font-bold text-white">⚙️ 訂餐系統設定</h3>
-          <p className="text-blue-100 text-xs mt-1">更新每日訂餐日期與合作店家</p>
-        </div>
-        
-        <div className="p-8 space-y-5">
-          <div className="space-y-1.5">
-            <label className="text-sm font-bold text-gray-600">訂餐日期</label>
-            <input 
-              type="date" 
-              value={orderDate}
-              onChange={(e) => setOrderDate(e.target.value)}
-              className="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-sm font-bold text-gray-600">店家選單</label>
-            <select 
-              value={selectedStore}
-              onChange={(e) => setSelectedStore(e.target.value)}
-              className="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none transition-all appearance-none"
-            >
-              {restaurants.length === 0 ? (
-                <option>載入中...</option>
-              ) : (
-                restaurants.map(r => <option key={r} value={r}>{r}</option>)
-              )}
-            </select>
-          </div>
-
-          <div className="pt-2 border-t border-dashed border-gray-200"></div>
-
-          <div className="space-y-1.5">
-            <label className="text-sm font-bold text-gray-600">管理員帳號</label>
-            <input 
-              type="text"
-              value={acc}
-              onChange={(e) => setAcc(e.target.value)}
-              placeholder="請輸入帳號"
-              className="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="text-sm font-bold text-gray-600">管理員密碼</label>
-            <input 
-              type="password"
-              value={pwd}
-              onChange={(e) => setPwd(e.target.value)}
-              placeholder="請輸入密碼"
-              className="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-            />
-          </div>
-
-          <button 
-            onClick={sendData}
-            disabled={loading}
-            className={`w-full py-4 rounded-xl font-bold text-white shadow-lg shadow-blue-200 transform transition-all active:scale-95 ${
-              loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-            }`}
-          >
-            {loading ? '送出中...' : '確認更新設定'}
-          </button>
-
-          {status.message && (
-            <div className={`mt-4 p-3 rounded-lg text-center text-sm font-medium ${
-              status.type === 'success' ? 'bg-green-50 text-green-700' : 
-              status.type === 'error' ? 'bg-red-50 text-red-700' : 'bg-blue-50 text-blue-700'
-            }`}>
-              {status.message}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default Settings;
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19",
+    "react-dom": "https://esm.sh/react-dom@19",
+    "react-dom/client": "https://esm.sh/react-dom@19/client",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div id="root"></div>
+    
+    <!-- 關鍵：data-presets 必須包含 typescript 與 react，且 type 為 text/babel -->
+    <script type="text/babel" data-type="module" data-presets="typescript,react" src="./index.tsx"></script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
