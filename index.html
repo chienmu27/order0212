@@ -1,146 +1,140 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>訂餐管理系統</title>
 
-<style>
-body{
-  font-family:"Microsoft JhengHei",sans-serif;
-  margin:0;
-  background:#f5f6fa;
-}
+import React, { useState, useEffect } from 'react';
+import { SETTINGS_SCRIPT_URL } from '../constants';
 
-/* ====== 導覽列 ====== */
-nav{
-  background:#4285f4;
-  padding:10px;
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-nav button{
-  background:white;
-  border:none;
-  padding:8px 16px;
-  border-radius:6px;
-  cursor:pointer;
-  font-weight:bold;
-}
-nav button.active{
-  background:#ffc107;
-}
+const Settings: React.FC = () => {
+  const [orderDate, setOrderDate] = useState('2026-01-26');
+  const [restaurants, setRestaurants] = useState<string[]>([]);
+  const [selectedStore, setSelectedStore] = useState('');
+  const [acc, setAcc] = useState('');
+  const [pwd, setPwd] = useState('');
+  const [status, setStatus] = useState({ message: '', type: '' });
+  const [loading, setLoading] = useState(false);
 
-/* ====== 頁面區塊 ====== */
-.page{
-  display:none;
-  padding:20px;
-}
-.page.active{
-  display:block;
-}
-iframe{
-  width:100%;
-  height:85vh;
-  border:none;
-  border-radius:10px;
-  background:white;
-}
-</style>
-</head>
-<body>
+  useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const res = await fetch(`${SETTINGS_SCRIPT_URL}?action=getOptions`);
+        const data = await res.json();
+        const filtered = data.filter((item: string) => item);
+        setRestaurants(filtered);
+        if (filtered.length > 0) setSelectedStore(filtered[0]);
+      } catch (err) {
+        setStatus({ message: "選單載入失敗", type: "error" });
+      }
+    };
+    fetchOptions();
+  }, []);
 
-<!-- ====== 導覽 ====== -->
-<nav>
-  <button onclick="showPage('form')" id="btn_form">📝 我要訂餐</button>
-  <button onclick="showPage('query')" id="btn_query">🔍 訂單查詢</button>
-  <button onclick="showPage('delete')" id="btn_delete">🗑️ 訂單刪除</button>
-  <button onclick="showPage('setting')" id="btn_setting">⚙️ 設定</button>
-</nav>
+  const sendData = async () => {
+    if (!acc || !pwd || !orderDate || !selectedStore) {
+      alert("請填寫完整資訊");
+      return;
+    }
 
-<!-- ========================= -->
-<!-- 1️⃣ 訂餐表單 -->
-<!-- ========================= -->
-<div id="form" class="page active">
-  <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScooZ_B9Jm7a2-IsEfJhwhLR7hsLyy8knIU3TKuzM7pw_Z5RQ/viewform?embedded=true"></iframe>
-</div>
+    setLoading(true);
+    setStatus({ message: "處理中...", type: "" });
 
-<!-- ========================= -->
-<!-- 2️⃣ 訂單查詢 -->
-<!-- ========================= -->
-<div id="query" class="page">
-<iframe srcdoc='
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<style>
-body{font-family:"Microsoft JhengHei";padding:20px;background:#fafafa;}
-table{border-collapse:collapse;width:100%;background:#fff;}
-th,td{border:1px solid #ccc;padding:8px;text-align:center;}
-th{background:#f8f9fa;}
-</style>
-</head>
-<body>
-<h3>訂單查詢系統</h3>
-<p>（此處保留您原本查詢程式完整功能）</p>
-</body>
-</html>
-'></iframe>
-</div>
+    const finalUrl = `${SETTINGS_SCRIPT_URL}?action=submit&date=${encodeURIComponent(orderDate)}&store=${encodeURIComponent(selectedStore)}&acc=${encodeURIComponent(acc)}&pwd=${encodeURIComponent(pwd)}`;
 
-<!-- ========================= -->
-<!-- 3️⃣ 訂單刪除 -->
-<!-- ========================= -->
-<div id="delete" class="page">
-<iframe srcdoc='
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<style>
-body{font-family:"Microsoft JhengHei";padding:20px;background:#f8f9fa;}
-</style>
-</head>
-<body>
-<h3>訂單管理清單</h3>
-<p>（此處保留您原本刪除程式完整功能）</p>
-</body>
-</html>
-'></iframe>
-</div>
+    try {
+      const res = await fetch(finalUrl);
+      const text = await res.text();
+      setStatus({ 
+        message: text, 
+        type: text.includes("成功") ? "success" : "error" 
+      });
+      if (text.includes("成功")) {
+        setAcc('');
+        setPwd('');
+      }
+    } catch (err) {
+      setStatus({ message: "連線發生錯誤", type: "error" });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-<!-- ========================= -->
-<!-- 4️⃣ 設定 -->
-<!-- ========================= -->
-<div id="setting" class="page">
-<iframe srcdoc='
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<style>
-body{font-family:"Microsoft JhengHei";padding:20px;}
-</style>
-</head>
-<body>
-<h3>訂餐管理系統設定</h3>
-<p>（此處保留您原本設定頁完整功能）</p>
-</body>
-</html>
-'></iframe>
-</div>
+  return (
+    <div className="max-w-md mx-auto p-8">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-xl overflow-hidden">
+        <div className="bg-blue-600 p-6 text-center">
+          <h3 className="text-xl font-bold text-white">⚙️ 訂餐系統設定</h3>
+          <p className="text-blue-100 text-xs mt-1">更新每日訂餐日期與合作店家</p>
+        </div>
+        
+        <div className="p-8 space-y-5">
+          <div className="space-y-1.5">
+            <label className="text-sm font-bold text-gray-600">訂餐日期</label>
+            <input 
+              type="date" 
+              value={orderDate}
+              onChange={(e) => setOrderDate(e.target.value)}
+              className="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+            />
+          </div>
 
-<script>
-function showPage(page){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById(page).classList.add("active");
+          <div className="space-y-1.5">
+            <label className="text-sm font-bold text-gray-600">店家選單</label>
+            <select 
+              value={selectedStore}
+              onChange={(e) => setSelectedStore(e.target.value)}
+              className="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none transition-all appearance-none"
+            >
+              {restaurants.length === 0 ? (
+                <option>載入中...</option>
+              ) : (
+                restaurants.map(r => <option key={r} value={r}>{r}</option>)
+              )}
+            </select>
+          </div>
 
-  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
-  document.getElementById("btn_"+page).classList.add("active");
-}
-</script>
+          <div className="pt-2 border-t border-dashed border-gray-200"></div>
 
-</body>
-</html>
+          <div className="space-y-1.5">
+            <label className="text-sm font-bold text-gray-600">管理員帳號</label>
+            <input 
+              type="text"
+              value={acc}
+              onChange={(e) => setAcc(e.target.value)}
+              placeholder="請輸入帳號"
+              className="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-sm font-bold text-gray-600">管理員密碼</label>
+            <input 
+              type="password"
+              value={pwd}
+              onChange={(e) => setPwd(e.target.value)}
+              placeholder="請輸入密碼"
+              className="w-full p-3 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+            />
+          </div>
+
+          <button 
+            onClick={sendData}
+            disabled={loading}
+            className={`w-full py-4 rounded-xl font-bold text-white shadow-lg shadow-blue-200 transform transition-all active:scale-95 ${
+              loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+            }`}
+          >
+            {loading ? '送出中...' : '確認更新設定'}
+          </button>
+
+          {status.message && (
+            <div className={`mt-4 p-3 rounded-lg text-center text-sm font-medium ${
+              status.type === 'success' ? 'bg-green-50 text-green-700' : 
+              status.type === 'error' ? 'bg-red-50 text-red-700' : 'bg-blue-50 text-blue-700'
+            }`}>
+              {status.message}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Settings;
