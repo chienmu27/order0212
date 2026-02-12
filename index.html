@@ -6,110 +6,124 @@
 <title>訂餐管理系統</title>
 
 <style>
-body{
-    margin:0;
-    font-family:"Microsoft JhengHei",sans-serif;
-    background:#f5f6fa;
+body {
+    font-family: "Microsoft JhengHei", sans-serif;
+    margin: 0;
+    background: #f5f6fa;
 }
 
-/* ===== 導覽列 ===== */
-.nav{
-    display:flex;
-    background:#4285f4;
-}
-.nav button{
-    flex:1;
-    padding:14px;
-    border:none;
-    background:transparent;
-    color:white;
-    font-size:16px;
-    cursor:pointer;
-}
-.nav button:hover{ background:#357abd; }
-.nav button.active{ background:#2f5fb3; }
-
-/* ===== 頁面區塊 ===== */
-.page{
-    display:none;
-    padding:20px;
-}
-.page.active{
-    display:block;
+/* ====== 導覽列 ====== */
+.navbar {
+    background: #4285f4;
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
-/* iframe */
-iframe{
-    width:100%;
-    height:85vh;
-    border:none;
+.navbar button {
+    background: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
 }
 
-/* 卡片樣式 */
-.card{
-    background:white;
-    padding:20px;
-    border-radius:10px;
-    box-shadow:0 2px 8px rgba(0,0,0,0.1);
-    margin-bottom:20px;
+.navbar button:hover {
+    background: #e3f2fd;
+}
+
+.page {
+    display: none;
+    padding: 20px;
+}
+
+.active {
+    display: block;
+}
+
+iframe {
+    width: 100%;
+    height: 85vh;
+    border: none;
+    border-radius: 10px;
+    background: white;
 }
 </style>
 </head>
-
 <body>
 
-<!-- 導覽列 -->
-<div class="nav">
-    <button onclick="showPage('form')" id="btn_form" class="active">📝 訂餐填寫</button>
-    <button onclick="showPage('query')" id="btn_query">🔍 訂單查詢</button>
-    <button onclick="showPage('delete')" id="btn_delete">🗑️ 訂單刪除</button>
-    <button onclick="showPage('setting')" id="btn_setting">⚙️ 設定</button>
+<!-- ====== 導覽按鈕 ====== -->
+<div class="navbar">
+    <button onclick="showPage('formPage')">📝 訂餐表單</button>
+    <button onclick="showPage('queryPage')">🔍 訂單查詢</button>
+    <button onclick="showPage('deletePage')">🗑️ 訂餐刪除</button>
+    <button onclick="showPage('settingPage')">⚙️ 系統設定</button>
 </div>
 
-<!-- ================= 訂餐填寫 ================= -->
-<div id="form" class="page active">
+<!-- ====== 1. 訂餐表單 ====== -->
+<div id="formPage" class="page active">
     <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScooZ_B9Jm7a2-IsEfJhwhLR7hsLyy8knIU3TKuzM7pw_Z5RQ/viewform?embedded=true"></iframe>
 </div>
 
-<!-- ================= 訂單查詢 ================= -->
-<div id="query" class="page">
-    <div class="card">
-        <h3>訂單查詢</h3>
-        <p>請使用下方 Google 試算表公開 CSV 進行查詢。</p>
-        <button onclick="window.open('https://docs.google.com/spreadsheets/d/e/2PACX-1vQISD3cRAvsldviyxyfFi7xQVE12l900EW1yu8_OXOS-uDIr12XAr8zISHsZpJzTBLe_j4kuHWwgdG6/pubhtml','_blank')">
-            開啟訂單查詢
-        </button>
-    </div>
+<!-- ====== 2. 訂單查詢 ====== -->
+<div id="queryPage" class="page">
+<iframe srcdoc='
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+body { font-family: Microsoft JhengHei; padding:20px; }
+</style>
+</head>
+<body>
+<h3>訂單查詢系統載入中...</h3>
+<script>
+window.location.href = "query.html";
+</script>
+</body>
+</html>
+'></iframe>
 </div>
 
-<!-- ================= 訂單刪除 ================= -->
-<div id="delete" class="page">
-    <div class="card">
-        <h3>訂單刪除管理</h3>
-        <p>請透過後台管理系統執行刪除操作。</p>
-        <button onclick="window.open('https://script.google.com/macros/s/AKfycbzh9zPFHf6vmhQQR7LrHlokXkPPKnQ2u9ZiqnL6x9kMe4YSaMkrLJJOsqU72OXOIwwo/exec','_blank')">
-            開啟刪除管理
-        </button>
-    </div>
+<!-- ====== 3. 訂餐刪除 ====== -->
+<div id="deletePage" class="page">
+<iframe srcdoc="
+<!DOCTYPE html>
+<html>
+<head><meta charset='UTF-8'></head>
+<body>
+<h3>訂單管理系統載入中...</h3>
+<script>
+window.location.href = 'delete.html';
+</script>
+</body>
+</html>
+"></iframe>
 </div>
 
-<!-- ================= 設定 ================= -->
-<div id="setting" class="page">
-    <div class="card">
-        <h3>系統設定</h3>
-        <p>請開啟設定頁面進行日期與店家管理。</p>
-        <button onclick="window.open('https://script.google.com/macros/s/AKfycbxsG1au7MoB7WKs397tM0ZQciSZkdyM_U5Bgb7FBTzOn9OVLFi6_94waAz3HEddovIY/exec','_blank')">
-            開啟設定頁面
-        </button>
-    </div>
+<!-- ====== 4. 設定 ====== -->
+<div id="settingPage" class="page">
+<iframe srcdoc="
+<!DOCTYPE html>
+<html>
+<head><meta charset='UTF-8'></head>
+<body>
+<h3>系統設定載入中...</h3>
+<script>
+window.location.href = 'setting.html';
+</script>
+</body>
+</html>
+"></iframe>
 </div>
 
 <script>
-function showPage(id){
-    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-    document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    document.getElementById('btn_'+id).classList.add('active');
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
 }
 </script>
 
